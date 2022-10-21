@@ -8,6 +8,8 @@ import com.portfolio.jtvdev.springsecurity.domain.port.out.JwtProviderPort;
 import com.portfolio.jtvdev.springsecurity.domain.port.out.RolePort;
 import com.portfolio.jtvdev.springsecurity.domain.port.out.UserPort;
 import com.portfolio.jtvdev.springsecurity.entity.LoginEntity;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth/login")
 public class LoginController {
@@ -35,6 +38,7 @@ public class LoginController {
 
   @PostMapping
   public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request, BindingResult bindingResult) {
+    log.info("LoginController.login << ENTER");
     if(bindingResult.hasErrors()) {
       return ResponseEntity.badRequest().build();
     }

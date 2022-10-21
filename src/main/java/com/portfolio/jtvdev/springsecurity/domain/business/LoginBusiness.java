@@ -7,6 +7,8 @@ import com.portfolio.jtvdev.springsecurity.domain.port.out.JwtProviderPort;
 import com.portfolio.jtvdev.springsecurity.domain.port.out.RolePort;
 import com.portfolio.jtvdev.springsecurity.domain.port.out.UserPort;
 import com.portfolio.jtvdev.springsecurity.entity.LoginEntity;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,8 +16,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Slf4j
+@Service
+@Transactional
 public class LoginBusiness implements LoginUseCase {
   private final AuthenticationManagerBuilder authenticationManagerBuilder;
   private final PasswordEncoder passwordEncoder;
@@ -31,6 +37,12 @@ public class LoginBusiness implements LoginUseCase {
           RolePort rolePort,
           JwtProviderPort jwtProviderPort
   ) {
+    log.info("LoginBusiness << ENTER");
+    log.info("authenticationManagerBuilder: {}", authenticationManagerBuilder);
+    log.info("passwordEncoder: {}", passwordEncoder);
+    log.info("userPort: {}", userPort);
+    log.info("rolePort: {}", rolePort);
+    log.info("jwtProviderPort: {}", jwtProviderPort);
     this.authenticationManagerBuilder = authenticationManagerBuilder;
     this.passwordEncoder = passwordEncoder;
     this.userPort = userPort;
@@ -40,20 +52,29 @@ public class LoginBusiness implements LoginUseCase {
 
   @Override
   public LoginResponse login(LoginEntity loginEntity) throws Exception {
+    log.info("login << ENTER");
     var authenticationToken = new UsernamePasswordAuthenticationToken(
             loginEntity.getUsername(),
             loginEntity.getPassword()
     );
-    var authentication = this.authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+    Authentication authentication;
+    try{
+      authentication = this.authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+    } catch (Exception e) {
+      log.error("Error in login: {}", e.getMessage());
+      log.error("Error in login:", e);
+      throw new Exception("Error in login");
+    }
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String jwt = this.jwtProviderPort.generateToken(authentication);
-    long expiresIn = this.jwtProviderPort.getExpirationDateFromToken(jwt).getTime() - System.currentTimeMillis();
+    //long expiresIn = this.jwtProviderPort.getExpirationDateFromToken(jwt).getTime() - System.currentTimeMillis();
 
     return LoginResponse.builder()
             .accessToken(jwt)
-            .expiresIn(expiresIn)
+//            .expiresIn(expiresIn)
+            .expiresIn(3600*1000)
             .tokenType(TokenTypes.TOKEN_BEARER.getType())
             .build();
   }

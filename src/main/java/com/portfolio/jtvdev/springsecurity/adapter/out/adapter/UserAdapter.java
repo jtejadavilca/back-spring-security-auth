@@ -5,6 +5,8 @@ import com.portfolio.jtvdev.springsecurity.adapter.out.repository.UserRepository
 import com.portfolio.jtvdev.springsecurity.domain.port.out.UserPort;
 import java.util.Optional;
 import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +15,7 @@ public class UserAdapter implements UserPort {
 
   private final UserRepository userRepository;
 
+  @Autowired
   public UserAdapter(UserRepository userRepository) {
     this.userRepository = userRepository;
   }

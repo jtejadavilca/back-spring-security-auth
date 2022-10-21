@@ -9,11 +9,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
+@Slf4j
 @Getter
 @Setter
 @AllArgsConstructor
@@ -27,6 +29,7 @@ public class MainUser implements UserDetails {
   private Collection<? extends GrantedAuthority> authorities;
 
   public static MainUser build(UserEntity user) {
+    log.info("build << ENTER");
     List<GrantedAuthority> authorities = user
             .getRoles()
             .stream()

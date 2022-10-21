@@ -15,10 +15,10 @@ public interface JwtProviderPort {
 
   Boolean validateToken(String token);
 
-  Date getExpirationDateFromToken(String token);
+//  Date getExpirationDateFromToken(String token);
 
-  <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver);
+//  <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver);
 
 
-  UsernamePasswordAuthenticationToken getAuthentication(UserDetails userDetails);
+//  UsernamePasswordAuthenticationToken getAuthentication(UserDetails userDetails);
 }
