@@ -1,12 +1,12 @@
 package com.portfolio.jtvdev.springsecurity.domain.business;
 
-import com.portfolio.jtvdev.springsecurity.adapter.in.model.LoginResponse;
+import com.portfolio.jtvdev.springsecurity.infrastructure.rest.response.LoginResponse;
 import com.portfolio.jtvdev.springsecurity.application.shared.TokenTypes;
-import com.portfolio.jtvdev.springsecurity.domain.port.in.LoginUseCase;
-import com.portfolio.jtvdev.springsecurity.domain.port.out.JwtProviderPort;
-import com.portfolio.jtvdev.springsecurity.domain.port.out.RolePort;
-import com.portfolio.jtvdev.springsecurity.domain.port.out.UserPort;
-import com.portfolio.jtvdev.springsecurity.entity.LoginEntity;
+import com.portfolio.jtvdev.springsecurity.application.port.in.LoginUseCase;
+import com.portfolio.jtvdev.springsecurity.application.port.out.JwtProviderPort;
+import com.portfolio.jtvdev.springsecurity.application.port.out.RolePort;
+import com.portfolio.jtvdev.springsecurity.application.port.out.UserPort;
+import com.portfolio.jtvdev.springsecurity.domain.model.LoginModel;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,30 +50,32 @@ public class LoginBusiness implements LoginUseCase {
   }
 
   @Override
-  public LoginResponse login(LoginEntity loginEntity) throws Exception {
+  public LoginResponse login(LoginModel loginEntity) throws Exception {
     log.info("login << ENTER");
-    var authenticationToken = new UsernamePasswordAuthenticationToken(
-            loginEntity.getUsername(),
-            loginEntity.getPassword()
-    );
-    Authentication authentication;
+
     try{
-      authentication = this.authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+      var authenticationToken = new UsernamePasswordAuthenticationToken(
+              loginEntity.getUsername(),
+              loginEntity.getPassword()
+      );
+
+      Authentication authentication = this.authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+
+      String jwt = this.jwtProviderPort.generateToken(authentication);
+      long expiresIn = this.jwtProviderPort.getExpirationDateFromToken(jwt).getTime() - System.currentTimeMillis();
+
+      return LoginResponse.builder()
+              .accessToken(jwt)
+              .expiresIn(expiresIn)
+              .tokenType(TokenTypes.TOKEN_BEARER.getType())
+              .build();
     } catch (Exception e) {
       log.error("Error in login: {}", e.getMessage());
       log.error("Error in login:", e);
       throw new Exception("Error in login");
     }
 
-    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    String jwt = this.jwtProviderPort.generateToken(authentication);
-    long expiresIn = this.jwtProviderPort.getExpirationDateFromToken(jwt).getTime() - System.currentTimeMillis();
-
-    return LoginResponse.builder()
-            .accessToken(jwt)
-            .expiresIn(expiresIn)
-            .tokenType(TokenTypes.TOKEN_BEARER.getType())
-            .build();
   }
 }
