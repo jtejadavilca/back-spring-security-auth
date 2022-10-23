@@ -41,11 +41,6 @@ public class RegisterController {
     }
 
     try{
-//      Set<RoleEntity> roles = new HashSet<>();
-//      roles.add(new RoleEntity(Roles.ROLE_USER));
-//      if(request.getRoles()!= null && request.getRoles().contains(Roles.ROLE_ADMIN.name())) {
-//        roles.add(new RoleEntity(Roles.ROLE_ADMIN));
-//      }
       RegisterEntity registerEntity = RegisterEntity.builder()
               .firstName(request.getFirstName())
               .lastName(request.getLastName())

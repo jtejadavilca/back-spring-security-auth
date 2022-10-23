@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.ComponentScan;
 
 
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class }, scanBasePackages = "com.portfolio.jtvdev.springsecurity")
+@SpringBootApplication
 public class SpringSecurityApplication {
 // https://www.youtube.com/watch?v=xnGJchfeI88
 // https://github.com/SaulM12/LastSpringSecurityJWT

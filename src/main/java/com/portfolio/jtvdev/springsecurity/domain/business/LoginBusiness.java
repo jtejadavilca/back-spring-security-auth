@@ -69,12 +69,11 @@ public class LoginBusiness implements LoginUseCase {
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String jwt = this.jwtProviderPort.generateToken(authentication);
-    //long expiresIn = this.jwtProviderPort.getExpirationDateFromToken(jwt).getTime() - System.currentTimeMillis();
+    long expiresIn = this.jwtProviderPort.getExpirationDateFromToken(jwt).getTime() - System.currentTimeMillis();
 
     return LoginResponse.builder()
             .accessToken(jwt)
-//            .expiresIn(expiresIn)
-            .expiresIn(3600*1000)
+            .expiresIn(expiresIn)
             .tokenType(TokenTypes.TOKEN_BEARER.getType())
             .build();
   }

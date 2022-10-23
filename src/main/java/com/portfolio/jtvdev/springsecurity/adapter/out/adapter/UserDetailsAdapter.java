@@ -22,6 +22,7 @@ public class UserDetailsAdapter implements UserDetailsPort {
     this.userPort = userPort;
   }
 
+  @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     log.info("loadUserByUsername << ENTER");
     return userPort.findByUsername(username)

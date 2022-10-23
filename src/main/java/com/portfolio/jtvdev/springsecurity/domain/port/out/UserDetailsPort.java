@@ -1,8 +1,6 @@
 package com.portfolio.jtvdev.springsecurity.domain.port.out;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserDetailsPort {
-  UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+public interface UserDetailsPort extends UserDetailsService {
 }

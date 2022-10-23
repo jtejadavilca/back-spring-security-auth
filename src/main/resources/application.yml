@@ -14,11 +14,12 @@ spring:
     generate-ddl: true
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 #      hbm2ddl:
 #        auto: create-drop
 
 
 jwt:
-  secret: secret
+#  secret: secret
+  secret: 12345678901234567890123456789012
   expiration: 3600

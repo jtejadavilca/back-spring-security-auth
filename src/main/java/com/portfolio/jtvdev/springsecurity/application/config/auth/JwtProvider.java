@@ -5,16 +5,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
-//import io.jsonwebtoken.security.Keys;
-//import io.jsonwebtoken.security.SignatureException;
-import java.io.Serial;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
+
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,8 +23,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class JwtProvider implements JwtProviderPort {
-//  @Serial
-//  private static final long serialVersionUID = -2550185165626007488L;
+
   @Value("${jwt.secret}")
   private String secret;
 
@@ -44,27 +41,21 @@ public class JwtProvider implements JwtProviderPort {
   // https://github.com/jwtk/jjwt#secretkey-formats
   public String generateToken(Authentication authentication) {
     log.info("generateToken << ENTER");
-    //SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     UserDetails mainUser = (UserDetails) authentication.getPrincipal();
     return Jwts.builder().setSubject(mainUser.getUsername())
             .setIssuedAt(new Date())
             .setExpiration(new Date((new Date()).getTime() + Long.parseLong(expiration) * 1000))
-            //.signWith(key)
-            .signWith(SignatureAlgorithm.HS512, secret)
+            .signWith(key)
             .compact();
   }
 
   //retrieve username from jwt token
   public String getUsernameFromToken(String token) {
     log.info("getUsernameFromToken << ENTER");
-//    return Jwts.parserBuilder()
-//            .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
-//            .build()
-//            .parseClaimsJws(token)
-//            .getBody()
-//            .getSubject();
-    return Jwts.parser()
-            .setSigningKey(secret)
+    return Jwts.parserBuilder()
+            .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
+            .build()
             .parseClaimsJws(token)
             .getBody()
             .getSubject();
@@ -74,11 +65,10 @@ public class JwtProvider implements JwtProviderPort {
   public Boolean validateToken(String token) {
     log.info("validateToken << ENTER");
     try {
-//      Jwts.parserBuilder()
-//              .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
-//              .build()
-//              .parseClaimsJws(token);
-      Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+      Jwts.parserBuilder()
+              .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
+              .build()
+              .parseClaimsJws(token);
       return true;
     } catch (MalformedJwtException ex) {
       log.error("Malformed JWT token");
@@ -88,32 +78,32 @@ public class JwtProvider implements JwtProviderPort {
       log.error("Expired JWT token");
     } catch (IllegalArgumentException ex) {
       log.error("JWT claims string is empty.");
-    } //catch (SignatureException ex) {
-//      log.error("Invalid JWT signature");
-//    }
+    } catch (SignatureException ex) {
+      log.error("Invalid JWT signature");
+    }
     return false;
   }
 
   //retrieve expiration date from jwt token
-//  public Date getExpirationDateFromToken(String token) {
-//    return getClaimFromToken(token, Claims::getExpiration);
-//  }
+  public Date getExpirationDateFromToken(String token) {
+    return getClaimFromToken(token, Claims::getExpiration);
+  }
 
-//
-//  public UsernamePasswordAuthenticationToken getAuthentication(UserDetails userDetails) {
-//    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-//  }
 
-//  public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-//    final Claims claims = getAllClaimsFromToken(token);
-//    return claimsResolver.apply(claims);
-//  }
-//
-//  private Claims getAllClaimsFromToken(String token) {
-//    return Jwts.parserBuilder()
-//            .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
-//            .build()
-//            .parseClaimsJws(token)
-//            .getBody();
-//  }
+  public UsernamePasswordAuthenticationToken getAuthentication(UserDetails userDetails) {
+    return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+  }
+
+  public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+    final Claims claims = getAllClaimsFromToken(token);
+    return claimsResolver.apply(claims);
+  }
+
+  private Claims getAllClaimsFromToken(String token) {
+    return Jwts.parserBuilder()
+            .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+  }
 }

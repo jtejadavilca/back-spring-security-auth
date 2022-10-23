@@ -52,6 +52,8 @@ public class LoginController {
 
       return ResponseEntity.ok(loginUseCase.login(loginEntity));
     } catch (Exception e) {
+      log.error("LoginController.login << ERROR: {}", e.getMessage());
+      log.error("LoginController.login << ERROR:", e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
