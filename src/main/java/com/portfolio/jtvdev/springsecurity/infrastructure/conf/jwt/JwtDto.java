@@ -1,4 +1,4 @@
-package com.portfolio.jtvdev.springsecurity.infrastructure.conf.auth;
+package com.portfolio.jtvdev.springsecurity.infrastructure.conf.jwt;
 
 import lombok.Builder;
 import lombok.Getter;

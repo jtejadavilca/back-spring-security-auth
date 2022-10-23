@@ -1,6 +1,6 @@
 package com.portfolio.jtvdev.springsecurity.infrastructure.db.adapter;
 
-import com.portfolio.jtvdev.springsecurity.infrastructure.conf.auth.MainUser;
+import com.portfolio.jtvdev.springsecurity.infrastructure.conf.jwt.MainUser;
 import com.portfolio.jtvdev.springsecurity.application.port.out.UserDetailsPort;
 import com.portfolio.jtvdev.springsecurity.application.port.out.UserPort;
 import lombok.extern.slf4j.Slf4j;

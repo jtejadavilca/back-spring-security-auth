@@ -1,4 +1,4 @@
-package com.portfolio.jtvdev.springsecurity.infrastructure.conf.auth;
+package com.portfolio.jtvdev.springsecurity.infrastructure.conf.jwt;
 
 import com.portfolio.jtvdev.springsecurity.application.port.out.JwtProviderPort;
 import io.jsonwebtoken.Claims;

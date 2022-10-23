@@ -1,5 +1,7 @@
 package com.portfolio.jtvdev.springsecurity.infrastructure.conf;
 
+import com.portfolio.jtvdev.springsecurity.infrastructure.conf.jwt.JwtEntryPoint;
+import com.portfolio.jtvdev.springsecurity.infrastructure.conf.jwt.JwtTokenFilter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.portfolio.jtvdev.springsecurity.infrastructure.conf.auth.*;
 
 @Slf4j
 @Configuration
