@@ -4,6 +4,8 @@ import com.portfolio.jtvdev.springsecurity.infrastructure.db.entity.RoleEntity;
 import com.portfolio.jtvdev.springsecurity.infrastructure.db.repository.RoleRepository;
 import com.portfolio.jtvdev.springsecurity.application.shared.Roles;
 import com.portfolio.jtvdev.springsecurity.application.port.out.RolePort;
+
+import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +23,13 @@ public class RoleAdapter implements RolePort {
 
   public Optional<RoleEntity> findByRoleName(Roles roleName) {
     return roleRepository.findByRoleName(roleName);
+  }
+
+  public List<RoleEntity> findAll() {
+    return roleRepository.findAll();
+  }
+
+  public RoleEntity save(RoleEntity role) {
+    return roleRepository.save(role);
   }
 }
